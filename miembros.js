@@ -49,27 +49,27 @@ const AREAS = {
 //      revisionCierre true/false  → revisión informal hecha (necesaria para Autónomo)
 const MIEMBROS = [
   {
-    id: "tu-nombre",
-    nombre: "Tu Nombre",
+    id: "carlos-profesor",
+    nombre: "Carlos",
     rol: "Coordinador del INNOHUB",
     actualizado: "2026-09-28",
     areas: {
-      soldadura: { quizTeorico: true, quizPractico: true, horas: 72, revisionCierre: false }
+      soldadura: { quizTeorico: true, quizPractico: true, horas: 100, revisionCierre: true }
     }
   },
   {
-    id: "ejemplo-ana",
-    nombre: "Ana Ejemplo",
-    rol: "Estudiante · Taller de electrónica",
+    id: "allan-villalobos",
+    nombre: "Allan Villobos",
+    rol: "Asistente de Electrica",
     actualizado: "2026-09-28",
     areas: {
-      soldadura: { quizTeorico: true, quizPractico: true, horas: 18, revisionCierre: false }
+      soldadura: { quizTeorico: true, quizPractico: true, horas: 50, revisionCierre: false }
     }
   },
   {
-    id: "ejemplo-luis",
-    nombre: "Luis Ejemplo",
-    rol: "Estudiante",
+    id: "sheilyn-morris",
+    nombre: "Sheilyn Morris",
+    rol: "Asistente Electrica",
     actualizado: "2026-09-28",
     areas: {
       soldadura: { quizTeorico: true, quizPractico: false, horas: 0, revisionCierre: false }
