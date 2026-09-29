@@ -121,11 +121,14 @@
     app.innerHTML = `<div class="card lista">
       <h2 style="margin-top:0">Miembros</h2>
       ${MIEMBROS.map(x => {
-        const r = calcularArea("soldadura", x.areas.soldadura);
-        const n = r.nivel >= 0 ? r.area.niveles[r.nivel] : null;
+        const niveles = Object.keys(AREAS).map(aid => {
+          const r = calcularArea(aid, (x.areas || {})[aid]);
+          const n = r.nivel >= 0 ? r.area.niveles[r.nivel] : null;
+          return `<span title="${esc(r.area.nombre)}">${r.area.icono} <b style="color:${n ? n.color : "inherit"}">${n ? n.nombre : "—"}</b></span>`;
+        }).join("<br>");
         return `<a href="?id=${encodeURIComponent(x.id)}">
           <span>${esc(x.nombre)}<br><span class="muted" style="font-size:13px">${esc(x.rol)}</span></span>
-          <span style="align-self:center;font-weight:700;color:${n ? n.color : "inherit"}">${n ? n.nombre : "Sin nivel"}</span></a>`;
+          <span style="align-self:center;font-size:14px;text-align:right;white-space:nowrap">${niveles}</span></a>`;
       }).join("")}
     </div>`;
   } else if (!m) {
@@ -139,18 +142,10 @@
     </section>`;
 
     Object.keys(AREAS).forEach(areaId => {
-      const r = calcularArea(areaId, m.areas[areaId]);
+      const r = calcularArea(areaId, (m.areas || {})[areaId]);
       const niv = r.area.niveles;
       const actual = r.nivel >= 0 ? niv[r.nivel] : null;
-      const d = r.datos;
-      const hE = r.area.horasExperto, hA = r.area.horasAutonomo;
-      const req = [
-        [!!d.quizTeorico, "Quiz teórico aprobado"],
-        [r.nivel >= 1, "Quiz práctico aprobado"],
-        [r.horas >= hE && r.nivel >= 1, `${hE} h validadas después del taller`],
-        [r.horas >= hE + hA && r.nivel >= 2, `${hA} h adicionales como Experto`],
-        [r.nivel >= 3, "Revisión de cierre"]
-      ];
+      const req = r.requisitos;
       const sigNivel = r.nivel < 3 ? niv[r.nivel + 1] : null;
 
       html += `<section class="card">
@@ -175,15 +170,14 @@
         </div>` : `<div class="siguiente"><div class="v">Nivel máximo alcanzado 🎉</div></div>`}
 
         <ul class="req">${req.map(([ok, t]) => `<li class="${ok ? "ok" : ""}"><b>${ok ? "✓" : "○"}</b>${t}</li>`).join("")}</ul>
+
+        <details class="siguiente">
+          <summary>¿Qué significa cada nivel en ${esc(r.area.nombre)}?</summary>
+          <div class="ley">${niv.map(n => `<div style="border-color:${n.color}">
+            <b>${n.nombre}</b><br>${esc(n.permiso)}<br><span class="muted">Cómo se obtiene: ${esc(n.requisito)}</span></div>`).join("")}</div>
+        </details>
       </section>`;
     });
-
-    const a0 = AREAS[Object.keys(AREAS)[0]];
-    html += `<section class="card"><details>
-      <summary>¿Qué significa cada nivel?</summary>
-      <div class="ley">${a0.niveles.map(n => `<div style="border-color:${n.color}">
-        <b>${n.nombre}</b><br>${esc(n.permiso)}<br><span class="muted">Cómo se obtiene: ${esc(n.requisito)}</span></div>`).join("")}</div>
-    </details></section>`;
 
     app.innerHTML = html;
     document.getElementById("pie").textContent = m.actualizado ? "Actualizado el " + fecha(m.actualizado) : "";
