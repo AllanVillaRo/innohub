@@ -54,7 +54,7 @@ const MIEMBROS = [
     rol: "Coordinador del INNOHUB",
     actualizado: "2026-09-28",
     areas: {
-      soldadura: { quizTeorico: true, quizPractico: true, horas: 100, revisionCierre: true }
+      soldadura: { quizTeorico: true, quizPractico: true, horas: 150, revisionCierre: true }
     }
   },
   {
