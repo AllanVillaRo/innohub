@@ -1,0 +1,24 @@
+INNOHUB · Perfiles con QR
+=========================
+
+Archivos:
+  perfil.html   → la página que abre el QR (muestra nombre, rol, nivel y barra de progreso)
+  gafete.html   → genera el reverso de cada gafete con su QR (descarga PNG)
+  miembros.js   → AQUÍ se editan los miembros, sus horas y quizzes
+  qr.js, logo.js → no tocar
+
+Cómo publicarlo gratis (GitHub Pages):
+  1. Crea un repositorio en github.com llamado "innohub" y sube estos archivos.
+  2. Settings → Pages → Branch: main → Save.
+  3. Tu página queda en https://allanvillaro.github.io/innohub/
+  4. En miembros.js cambia URL_BASE por esa dirección.
+  5. Abre https://allanvillaro.github.io/innohub/gafete.html y descarga los reversos.
+
+Actualizar niveles: edita miembros.js (horas, quizTeorico, quizPractico, revisionCierre)
+y súbelo de nuevo. El QR impreso no cambia nunca; la página se actualiza sola.
+
+Reglas de Soldadura:
+  Básico (amarillo)    quiz teórico
+  Intermedio (naranja) quiz práctico
+  Experto (rojo)       50 h validadas después del taller
+  Autónomo (azul)      100 h adicionales como Experto + revisión de cierre (150 h en total)

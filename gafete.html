@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reverso de Gafetes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --teal:#054254; --mint:#CEE7DF; --bg:#F5FAF8; --card:#fff; --ink:#054254; --muted:#4E7480; --line:#CEE7DF; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#04222B; --card:#07313D; --ink:#DDF0EA; --muted:#92B6B0; --line:#0E4A58; }
+  }
+  :root[data-theme="dark"] { --bg:#04222B; --card:#07313D; --ink:#DDF0EA; --muted:#92B6B0; --line:#0E4A58; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Anonymous Pro", ui-monospace, monospace; }
+  main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  p { color: var(--muted); margin: 0 0 16px; }
+  .ctrl { display:flex; gap:8px; flex-wrap:wrap; align-items:end; background:var(--card); border:1px solid var(--line); padding:16px; border-radius:6px; margin-bottom:24px; }
+  .ctrl label { flex: 1 1 320px; font-size:14px; }
+  .ctrl input { width:100%; margin-top:4px; padding:10px; font:inherit; border:2px solid var(--teal); border-radius:4px; background:#fff; color:#054254; }
+  button { font:inherit; font-weight:700; padding:10px 16px; border:0; border-radius:4px; background:var(--teal); color:#fff; cursor:pointer; }
+  button.sec { background: var(--mint); color:#054254; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 20px; }
+  .item { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:12px; }
+  .item canvas { width:100%; height:auto; display:block; border:1px solid var(--line); background:#fff; }
+  .item .row { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .item a { color: var(--muted); font-size: 12px; overflow-wrap:anywhere; }
+  .aviso { background:#FFF4D6; color:#5A4200; padding:10px 12px; border-radius:4px; font-size:14px; margin-bottom:16px; display:none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Reverso de gafetes</h1>
+  <p>Cada gafete lleva un QR que abre el perfil de la persona con su nivel en cada área. Descárgalos en PNG (1011 × 639 px ×2, mismo formato que el frente).</p>
+  <div class="aviso" id="aviso">⚠️ Todavía no has puesto la dirección real de la página. Cámbiala abajo (o en <b>miembros.js</b>) antes de imprimir.</div>
+  <div class="ctrl">
+    <label>Dirección donde está publicada la página
+      <input id="base" spellcheck="false">
+    </label>
+    <button id="regen" class="sec">Actualizar QR</button>
+    <button id="todos">Descargar todos</button>
+  </div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<script src="logo.js"></script>
+<script src="qr.js"></script>
+<script src="miembros.js"></script>
+<script>
+  const W = 1011, H = 639, S = 2; // mismo tamaño que el frente, a doble resolución para imprimir
+  const TEAL = "#054254";
+  const baseInput = document.getElementById("base");
+  const grid = document.getElementById("grid");
+
+  // Si la página ya está publicada, usa su propia dirección automáticamente
+  let base = URL_BASE;
+  if (location.protocol.startsWith("http") && URL_BASE.includes("TU-USUARIO")) {
+    base = location.href.replace(/[?#].*$/, "").replace(/[^/]*$/, "");
+  }
+  baseInput.value = base;
+
+  const logo = new Image();
+  logo.src = LOGO_INNOHUB;
+
+  const urlDe = m => {
+    let b = baseInput.value.trim();
+    if (!b.endsWith("/")) b += "/";
+    return b + "perfil.html?id=" + encodeURIComponent(m.id);
+  };
+
+  function ajustar(ctx, texto, maxW, px, peso) {
+    let size = px;
+    do { ctx.font = `${peso} ${size}px "Anonymous Pro", monospace`; size -= 1; }
+    while (ctx.measureText(texto).width > maxW && size > 12);
+  }
+
+  function dibujar(canvas, m) {
+    const ctx = canvas.getContext("2d");
+    canvas.width = W * S; canvas.height = H * S;
+    ctx.setTransform(S, 0, 0, S, 0, 0);
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
+
+    // Logo (misma posición que el frente)
+    const lw = 290, lh = lw * logo.height / logo.width;
+    ctx.drawImage(logo, (W - lw) / 2, 92, lw, lh);
+
+    // Recuadro con el QR (mismo marco que el frente)
+    const bx = 352, by = 188, bw = 306, bh = 292;
+    ctx.fillStyle = "#fff"; ctx.fillRect(bx, by, bw, bh);
+    ctx.lineWidth = 5; ctx.strokeStyle = TEAL; ctx.strokeRect(bx, by, bw, bh);
+    const qs = 250;
+    QR.draw(ctx, urlDe(m), bx + (bw - qs) / 2, by + (bh - qs) / 2, qs, TEAL);
+
+    // Nombre, rol y leyenda
+    ctx.fillStyle = TEAL; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ajustar(ctx, m.nombre, 860, 34, 700);
+    ctx.fillText(m.nombre, W / 2, 527);
+    ajustar(ctx, m.rol, 860, 24, 400);
+    ctx.fillText(m.rol, W / 2, 560);
+    ctx.font = `400 19px "Anonymous Pro", monospace`;
+    ctx.globalAlpha = 0.75;
+    ctx.fillText("Escanea para ver mi nivel en cada área", W / 2, 598);
+    ctx.globalAlpha = 1;
+  }
+
+  function descargar(canvas, m) {
+    return new Promise(res => canvas.toBlob(b => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = `gafete-reverso-${m.id}.png`;
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); res(); }, 300);
+    }, "image/png"));
+  }
+
+  function render() {
+    document.getElementById("aviso").style.display = baseInput.value.includes("TU-USUARIO") ? "block" : "none";
+    grid.innerHTML = "";
+    MIEMBROS.forEach(m => {
+      const div = document.createElement("div");
+      div.className = "item";
+      const c = document.createElement("canvas");
+      dibujar(c, m);
+      const url = urlDe(m);
+      div.append(c);
+      const row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = `<a href="${url}" target="_blank" rel="noopener">${url}</a>`;
+      const btn = document.createElement("button");
+      btn.textContent = "Descargar PNG";
+      btn.onclick = () => descargar(c, m);
+      row.append(btn);
+      div.append(row);
+      div._c = c; div._m = m;
+      grid.append(div);
+    });
+  }
+
+  document.getElementById("regen").onclick = render;
+  baseInput.addEventListener("keydown", e => { if (e.key === "Enter") render(); });
+  document.getElementById("todos").onclick = async () => {
+    for (const d of grid.children) await descargar(d._c, d._m);
+  };
+
+  Promise.all([
+    new Promise(r => logo.complete ? r() : (logo.onload = r)),
+    document.fonts.load('700 34px "Anonymous Pro"').catch(() => {}),
+    document.fonts.load('400 24px "Anonymous Pro"').catch(() => {})
+  ]).then(render);
+</script>
+</body>
+</html>

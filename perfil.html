@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil INNOHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #054254;
+    --mint: #CEE7DF;
+    --bg: #F5FAF8;
+    --card: #FFFFFF;
+    --ink: #054254;
+    --muted: #4E7480;
+    --line: #CEE7DF;
+    --track: #E4EFEB;
+    --logo-filter: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #04222B; --card: #07313D; --ink: #DDF0EA; --muted: #92B6B0;
+      --line: #0E4A58; --track: #0C3D49; --logo-filter: brightness(0) invert(0.9);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #04222B; --card: #07313D; --ink: #DDF0EA; --muted: #92B6B0;
+    --line: #0E4A58; --track: #0C3D49; --logo-filter: brightness(0) invert(0.9);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Anonymous Pro", ui-monospace, Menlo, Consolas, monospace;
+    font-size: 16px; line-height: 1.45;
+  }
+  main { max-width: 560px; margin: 0 auto; padding: 24px 16px 40px; }
+  header { text-align: center; margin-bottom: 20px; }
+  header img { height: 44px; filter: var(--logo-filter); }
+
+  .card {
+    background: var(--card); border: 3px solid var(--teal); border-radius: 4px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .card { border-color: var(--line); } }
+  :root[data-theme="dark"] .card { border-color: var(--line); }
+
+  .perfil { display: flex; gap: 16px; align-items: center; }
+  .avatar {
+    flex: none; width: 64px; height: 64px; border-radius: 50%;
+    background: var(--mint); color: #054254; display: grid; place-items: center;
+    font-weight: 700; font-size: 24px;
+  }
+  .perfil h1 { margin: 0; font-size: 24px; line-height: 1.15; overflow-wrap: anywhere; }
+  .perfil p { margin: 4px 0 0; color: var(--muted); }
+
+  .area-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .area-head h2 { margin: 0; font-size: 20px; }
+  .chip {
+    display: inline-block; padding: 4px 12px; border-radius: 999px;
+    font-weight: 700; color: #fff; font-size: 15px; letter-spacing: .02em;
+  }
+  .chip.dark-text { color: #3A2A00; }
+  .permiso { margin: 12px 0 16px; }
+
+  .barra { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .tramo { height: 14px; background: var(--track); border-radius: 3px; overflow: hidden; }
+  .tramo > span { display: block; height: 100%; transition: width .8s ease; width: 0; }
+  .etiquetas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px; font-size: 12px; color: var(--muted); }
+  .etiquetas span { text-align: center; }
+  .etiquetas span.on { color: var(--ink); font-weight: 700; }
+  .pct { text-align: right; font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .siguiente { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); }
+  .siguiente .t { font-size: 14px; color: var(--muted); }
+  .siguiente .v { font-weight: 700; margin-top: 2px; }
+  .mini { height: 8px; background: var(--track); border-radius: 99px; margin-top: 8px; overflow: hidden; }
+  .mini > span { display: block; height: 100%; border-radius: 99px; width: 0; transition: width .8s ease; }
+
+  ul.req { list-style: none; padding: 0; margin: 16px 0 0; font-size: 14px; }
+  ul.req li { display: flex; gap: 8px; padding: 4px 0; color: var(--muted); }
+  ul.req li.ok { color: var(--ink); }
+  ul.req b { flex: none; width: 1.2em; }
+
+  details { font-size: 14px; }
+  summary { cursor: pointer; font-weight: 700; }
+  .ley { display: grid; gap: 10px; margin-top: 12px; }
+  .ley div { border-left: 6px solid; padding-left: 10px; }
+
+  .lista a {
+    display: flex; justify-content: space-between; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid var(--line); color: inherit; text-decoration: none;
+  }
+  .lista a:last-child { border-bottom: 0; }
+  .muted { color: var(--muted); }
+  footer { text-align: center; font-size: 13px; color: var(--muted); margin-top: 24px; }
+</style>
+</head>
+<body>
+<main>
+  <header><img id="logo" alt="INNOHUB"></header>
+  <div id="app"></div>
+  <footer id="pie"></footer>
+</main>
+
+<script src="logo.js"></script>
+<script src="miembros.js"></script>
+<script>
+  document.getElementById("logo").src = LOGO_INNOHUB;
+  const app = document.getElementById("app");
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const iniciales = n => n.split(/\s+/).filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join("");
+  const fecha = f => f ? new Date(f + "T12:00:00").toLocaleDateString("es-CR", { day: "numeric", month: "long", year: "numeric" }) : "";
+
+  const id = new URLSearchParams(location.search).get("id");
+  const m = id && MIEMBROS.find(x => x.id === id);
+
+  if (!id) {
+    // Sin id: directorio de miembros (útil para quien administra)
+    app.innerHTML = `<div class="card lista">
+      <h2 style="margin-top:0">Miembros</h2>
+      ${MIEMBROS.map(x => {
+        const r = calcularArea("soldadura", x.areas.soldadura);
+        const n = r.nivel >= 0 ? r.area.niveles[r.nivel] : null;
+        return `<a href="?id=${encodeURIComponent(x.id)}">
+          <span>${esc(x.nombre)}<br><span class="muted" style="font-size:13px">${esc(x.rol)}</span></span>
+          <span style="align-self:center;font-weight:700;color:${n ? n.color : "inherit"}">${n ? n.nombre : "Sin nivel"}</span></a>`;
+      }).join("")}
+    </div>`;
+  } else if (!m) {
+    app.innerHTML = `<div class="card"><h2 style="margin-top:0">No encontrado</h2>
+      <p class="muted">Este gafete no está registrado. Habla con la coordinación del INNOHUB.</p></div>`;
+  } else {
+    document.title = m.nombre + " · INNOHUB";
+    let html = `<section class="card perfil">
+      <div class="avatar">${esc(iniciales(m.nombre))}</div>
+      <div><h1>${esc(m.nombre)}</h1><p>${esc(m.rol)}</p></div>
+    </section>`;
+
+    Object.keys(AREAS).forEach(areaId => {
+      const r = calcularArea(areaId, m.areas[areaId]);
+      const niv = r.area.niveles;
+      const actual = r.nivel >= 0 ? niv[r.nivel] : null;
+      const d = r.datos;
+      const hE = r.area.horasExperto, hA = r.area.horasAutonomo;
+      const req = [
+        [!!d.quizTeorico, "Quiz teórico aprobado"],
+        [r.nivel >= 1, "Quiz práctico aprobado"],
+        [r.horas >= hE && r.nivel >= 1, `${hE} h validadas después del taller`],
+        [r.horas >= hE + hA && r.nivel >= 2, `${hA} h adicionales como Experto`],
+        [r.nivel >= 3, "Revisión de cierre"]
+      ];
+      const sigNivel = r.nivel < 3 ? niv[r.nivel + 1] : null;
+
+      html += `<section class="card">
+        <div class="area-head">
+          <h2>${r.area.icono} ${esc(r.area.nombre)}</h2>
+          ${actual
+            ? `<span class="chip ${actual.id === "basico" ? "dark-text" : ""}" style="background:${actual.color}">${actual.nombre}</span>`
+            : `<span class="chip" style="background:#8AA">Sin nivel</span>`}
+        </div>
+        <p class="permiso">${actual ? esc(actual.permiso) : "Todavía no ha completado el taller."}</p>
+
+        <div class="barra" role="progressbar" aria-valuenow="${r.porcentaje}" aria-valuemin="0" aria-valuemax="100" aria-label="Progreso en ${esc(r.area.nombre)}">
+          ${r.tramos.map((t, i) => `<div class="tramo"><span data-w="${t * 100}" style="background:${niv[i].color}"></span></div>`).join("")}
+        </div>
+        <div class="etiquetas">${niv.map((n, i) => `<span class="${i <= r.nivel ? "on" : ""}">${n.nombre}</span>`).join("")}</div>
+        <div class="pct">${r.porcentaje}% del camino</div>
+
+        ${sigNivel ? `<div class="siguiente">
+          <div class="t">Siguiente nivel: <b style="color:${sigNivel.color}">${sigNivel.nombre}</b></div>
+          <div class="v">${esc(r.siguiente.texto)}</div>
+          ${r.siguiente.meta ? `<div class="mini"><span data-w="${Math.min(r.siguiente.actual / r.siguiente.meta, 1) * 100}" style="background:${sigNivel.color}"></span></div>` : ""}
+        </div>` : `<div class="siguiente"><div class="v">Nivel máximo alcanzado 🎉</div></div>`}
+
+        <ul class="req">${req.map(([ok, t]) => `<li class="${ok ? "ok" : ""}"><b>${ok ? "✓" : "○"}</b>${t}</li>`).join("")}</ul>
+      </section>`;
+    });
+
+    const a0 = AREAS[Object.keys(AREAS)[0]];
+    html += `<section class="card"><details>
+      <summary>¿Qué significa cada nivel?</summary>
+      <div class="ley">${a0.niveles.map(n => `<div style="border-color:${n.color}">
+        <b>${n.nombre}</b><br>${esc(n.permiso)}<br><span class="muted">Cómo se obtiene: ${esc(n.requisito)}</span></div>`).join("")}</div>
+    </details></section>`;
+
+    app.innerHTML = html;
+    document.getElementById("pie").textContent = m.actualizado ? "Actualizado el " + fecha(m.actualizado) : "";
+  }
+
+  // Animar barras
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.querySelectorAll("[data-w]").forEach(el => el.style.width = el.dataset.w + "%")));
+</script>
+</body>
+</html>
